@@ -6,6 +6,7 @@
     <class>com.eureka.v1_0.kyc.information.entities.domains.Email</class>
     <class>com.eureka.v1_0.kyc.information.entities.EmailInformation</class>
     <class>com.eureka.v1_0.kyc.information.entities.MsisdnInformation</class>
+    <class>com.eureka.v1_0.kyc.information.entities.ContactInformation</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/donations_ng"/>
       <property name="javax.persistence.jdbc.user" value="donations_ng"/>

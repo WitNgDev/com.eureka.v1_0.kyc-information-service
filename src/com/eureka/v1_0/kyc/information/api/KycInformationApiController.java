@@ -6,6 +6,16 @@
 package com.eureka.v1_0.kyc.information.api;
 
 import com.eureka.v1_0.kyc.information.exchange.api.KycInformationApiService;
+import com.eureka.v1_0.kyc.information.exchange.contactinformation.CreateContactInformationRequest;
+import com.eureka.v1_0.kyc.information.exchange.contactinformation.CreateContactInformationResponse;
+import com.eureka.v1_0.kyc.information.exchange.contactinformation.FindContactInformationRequest;
+import com.eureka.v1_0.kyc.information.exchange.contactinformation.FindContactInformationResponse;
+import com.eureka.v1_0.kyc.information.exchange.contactinformation.GetContactInformationRequest;
+import com.eureka.v1_0.kyc.information.exchange.contactinformation.GetContactInformationResponse;
+import com.eureka.v1_0.kyc.information.exchange.contactinformation.RemoveContactInformationRequest;
+import com.eureka.v1_0.kyc.information.exchange.contactinformation.RemoveContactInformationResponse;
+import com.eureka.v1_0.kyc.information.exchange.contactinformation.UpdateContactInformationRequest;
+import com.eureka.v1_0.kyc.information.exchange.contactinformation.UpdateContactInformationResponse;
 import com.eureka.v1_0.kyc.information.exchange.emailinformation.CreateEmailInformationRequest;
 import com.eureka.v1_0.kyc.information.exchange.emailinformation.CreateEmailInformationResponse;
 import com.eureka.v1_0.kyc.information.exchange.emailinformation.FindAccountEmailInformationRequest;
@@ -385,15 +395,15 @@ public class KycInformationApiController {
 
     @ResponseBody
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.TEXT_XML_VALUE, produces = MediaType.TEXT_XML_VALUE, value = "/updateemailinformation")
-    public UpdateEmailInformationResponse updateEmailInformation(@RequestBody UpdateEmailInformationRequest updateEmailInformationRequest, HttpServletResponse response, HttpServletRequest request){
-        if(updateEmailInformationRequest != null){
+    public UpdateEmailInformationResponse updateEmailInformation(@RequestBody UpdateEmailInformationRequest updateEmailInformationRequest, HttpServletResponse response, HttpServletRequest request) {
+        if (updateEmailInformationRequest != null) {
             try {
                 UpdateEmailInformationResponse updateEmailInformationResponse = this.kycInformationApiService.updateEmailInformation(updateEmailInformationRequest);
-                if(updateEmailInformationResponse != null){
+                if (updateEmailInformationResponse != null) {
                     witLoggerService.debug(JaxbHandler.toXml(updateEmailInformationResponse));
                     response.setStatus(HttpServletResponse.SC_OK);
-                    return updateEmailInformationResponse;                    
-                }else{
+                    return updateEmailInformationResponse;
+                } else {
                     response.setStatus(HttpServletResponse.SC_EXPECTATION_FAILED);
                 }
             } catch (Exception ex) {
@@ -402,20 +412,20 @@ public class KycInformationApiController {
             }
         }
         response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-        return null;        
+        return null;
     }
-    
+
     @ResponseBody
-    @RequestMapping(method = RequestMethod.POST, consumes = MediaType.TEXT_XML_VALUE, produces = MediaType.TEXT_XML_VALUE, value = "/validateemailinformation")    
-    public ValidateEmailInformationResponse validateEmailInformation(@RequestBody ValidateEmailInformationRequest validateEmailInformationRequest, HttpServletResponse response, HttpServletRequest request){
-        if(validateEmailInformationRequest != null){
+    @RequestMapping(method = RequestMethod.POST, consumes = MediaType.TEXT_XML_VALUE, produces = MediaType.TEXT_XML_VALUE, value = "/validateemailinformation")
+    public ValidateEmailInformationResponse validateEmailInformation(@RequestBody ValidateEmailInformationRequest validateEmailInformationRequest, HttpServletResponse response, HttpServletRequest request) {
+        if (validateEmailInformationRequest != null) {
             try {
                 ValidateEmailInformationResponse validateEmailInformationResponse = this.kycInformationApiService.validateEmailInformation(validateEmailInformationRequest);
-                if(validateEmailInformationResponse != null){
+                if (validateEmailInformationResponse != null) {
                     witLoggerService.debug(JaxbHandler.toXml(validateEmailInformationResponse));
                     response.setStatus(HttpServletResponse.SC_OK);
-                    return validateEmailInformationResponse;                                        
-                }else{
+                    return validateEmailInformationResponse;
+                } else {
                     response.setStatus(HttpServletResponse.SC_EXPECTATION_FAILED);
                 }
             } catch (Exception ex) {
@@ -424,6 +434,122 @@ public class KycInformationApiController {
             }
         }
         response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-        return null;                
+        return null;
     }
+
+    @ResponseBody
+    @RequestMapping(method = RequestMethod.POST, consumes = MediaType.TEXT_XML_VALUE, produces = MediaType.TEXT_XML_VALUE, value = "/createcontactinformation")
+    public CreateContactInformationResponse createContactInformation(@RequestBody CreateContactInformationRequest createContactInformationRequest, HttpServletRequest request, HttpServletResponse response) {
+        if (createContactInformationRequest != null) {
+            try {
+                witLoggerService.debug(JaxbHandler.toXml(createContactInformationRequest));
+                CreateContactInformationResponse createContactInformationResponse = this.kycInformationApiService.createContactInformation(createContactInformationRequest);
+                if (createContactInformationResponse != null) {
+                    witLoggerService.debug(JaxbHandler.toXml(createContactInformationResponse));
+                    response.setStatus(HttpServletResponse.SC_OK);
+                    return createContactInformationResponse;
+                } else {
+                    response.setStatus(HttpServletResponse.SC_EXPECTATION_FAILED);
+                }
+            } catch (Exception ex) {
+                witLoggerService.warn(ex);
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            }
+        }
+        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        return null;
+    }
+
+    @ResponseBody
+    @RequestMapping(method = RequestMethod.POST, consumes = MediaType.TEXT_XML_VALUE, produces = MediaType.TEXT_XML_VALUE, value = "/findcontactinformation")
+    public FindContactInformationResponse findContactInformation(@RequestBody FindContactInformationRequest findContactInformationRequest, HttpServletRequest request, HttpServletResponse response) {
+        if (findContactInformationRequest != null) {
+            try {
+                witLoggerService.debug(JaxbHandler.toXml(findContactInformationRequest));
+                FindContactInformationResponse findContactInformationResponse = this.kycInformationApiService.findContactInformation(findContactInformationRequest);
+                if (findContactInformationResponse != null) {
+                    witLoggerService.debug(JaxbHandler.toXml(findContactInformationResponse));
+                    response.setStatus(HttpServletResponse.SC_OK);
+                    return findContactInformationResponse;
+                } else {
+                    response.setStatus(HttpServletResponse.SC_EXPECTATION_FAILED);
+                }
+            } catch (Exception ex) {
+                witLoggerService.warn(ex);
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            }
+        }
+        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        return null;
+    }
+
+    @ResponseBody
+    @RequestMapping(method = RequestMethod.POST, consumes = MediaType.TEXT_XML_VALUE, produces = MediaType.TEXT_XML_VALUE, value = "/getcontactinformation")
+    public GetContactInformationResponse getContactInformation(GetContactInformationRequest getContactInformationRequest, HttpServletRequest request, HttpServletResponse response) {
+        if (getContactInformationRequest != null) {
+            try {
+                witLoggerService.debug(JaxbHandler.toXml(getContactInformationRequest));
+                GetContactInformationResponse getContactInformationResponse = this.kycInformationApiService.getContactInformation(getContactInformationRequest);
+                if (getContactInformationResponse != null) {
+                    witLoggerService.debug(JaxbHandler.toXml(getContactInformationResponse));
+                    response.setStatus(HttpServletResponse.SC_OK);
+                    return getContactInformationResponse;
+                } else {
+                    response.setStatus(HttpServletResponse.SC_EXPECTATION_FAILED);
+                }
+            } catch (Exception ex) {
+                witLoggerService.warn(ex);
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            }
+        }
+        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        return null;
+    }
+
+    @ResponseBody
+    @RequestMapping(method = RequestMethod.POST, consumes = MediaType.TEXT_XML_VALUE, produces = MediaType.TEXT_XML_VALUE, value = "/removecontactinformation")
+    public RemoveContactInformationResponse removeContactInformation(RemoveContactInformationRequest removeContactInformationRequest, HttpServletRequest request, HttpServletResponse response) {
+        if (removeContactInformationRequest != null) {
+            try {
+                witLoggerService.debug(JaxbHandler.toXml(removeContactInformationRequest));
+                RemoveContactInformationResponse removeContactInformationResponse = this.kycInformationApiService.removeContactInformation(removeContactInformationRequest);
+                if (removeContactInformationResponse != null) {
+                    witLoggerService.debug(JaxbHandler.toXml(removeContactInformationResponse));
+                    response.setStatus(HttpServletResponse.SC_OK);
+                    return removeContactInformationResponse;
+                } else {
+                    response.setStatus(HttpServletResponse.SC_EXPECTATION_FAILED);
+                }
+            } catch (Exception ex) {
+                witLoggerService.warn(ex);
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            }
+        }
+        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        return null;
+    }
+
+    @ResponseBody
+    @RequestMapping(method = RequestMethod.POST, consumes = MediaType.TEXT_XML_VALUE, produces = MediaType.TEXT_XML_VALUE, value = "/updatecontactinformation")
+    public UpdateContactInformationResponse updateContactInformation(UpdateContactInformationRequest updateContactInformationRequest, HttpServletRequest request, HttpServletResponse response) {
+        if (updateContactInformationRequest != null) {
+            try {
+                witLoggerService.debug(updateContactInformationRequest);
+                UpdateContactInformationResponse updateContactInformationResponse = this.kycInformationApiService.updateContactInformation(updateContactInformationRequest);
+                if (updateContactInformationResponse != null) {
+                    witLoggerService.debug(JaxbHandler.toXml(updateContactInformationResponse));
+                    response.setStatus(HttpServletResponse.SC_OK);
+                    return updateContactInformationResponse;
+                } else {
+                    response.setStatus(HttpServletResponse.SC_EXPECTATION_FAILED);
+                }
+            } catch (Exception ex) {
+                witLoggerService.warn(ex);
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            }
+        }
+        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        return null;
+    }
+
 }

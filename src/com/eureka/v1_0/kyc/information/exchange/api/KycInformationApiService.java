@@ -5,6 +5,16 @@
  */
 package com.eureka.v1_0.kyc.information.exchange.api;
 
+import com.eureka.v1_0.kyc.information.exchange.contactinformation.CreateContactInformationRequest;
+import com.eureka.v1_0.kyc.information.exchange.contactinformation.CreateContactInformationResponse;
+import com.eureka.v1_0.kyc.information.exchange.contactinformation.FindContactInformationRequest;
+import com.eureka.v1_0.kyc.information.exchange.contactinformation.FindContactInformationResponse;
+import com.eureka.v1_0.kyc.information.exchange.contactinformation.GetContactInformationRequest;
+import com.eureka.v1_0.kyc.information.exchange.contactinformation.GetContactInformationResponse;
+import com.eureka.v1_0.kyc.information.exchange.contactinformation.RemoveContactInformationRequest;
+import com.eureka.v1_0.kyc.information.exchange.contactinformation.RemoveContactInformationResponse;
+import com.eureka.v1_0.kyc.information.exchange.contactinformation.UpdateContactInformationRequest;
+import com.eureka.v1_0.kyc.information.exchange.contactinformation.UpdateContactInformationResponse;
 import com.eureka.v1_0.kyc.information.exchange.emailinformation.CreateEmailInformationRequest;
 import com.eureka.v1_0.kyc.information.exchange.emailinformation.CreateEmailInformationResponse;
 import com.eureka.v1_0.kyc.information.exchange.emailinformation.FindAccountEmailInformationRequest;
@@ -75,4 +85,14 @@ public interface KycInformationApiService {
     public UpdateEmailInformationResponse updateEmailInformation(UpdateEmailInformationRequest updateEmailInformationRequest) throws Exception;
     
     public ValidateEmailInformationResponse validateEmailInformation(ValidateEmailInformationRequest validateEmailInformationRequest) throws Exception;
+    
+    public CreateContactInformationResponse createContactInformation(CreateContactInformationRequest createContactInformationRequest) throws Exception;
+    
+    public FindContactInformationResponse findContactInformation(FindContactInformationRequest findContactInformationRequest) throws Exception;
+    
+    public GetContactInformationResponse getContactInformation(GetContactInformationRequest getContactInformationRequest) throws Exception;
+    
+    public RemoveContactInformationResponse removeContactInformation(RemoveContactInformationRequest removeContactInformationRequest) throws Exception;
+    
+    public UpdateContactInformationResponse updateContactInformation(UpdateContactInformationRequest updateContactInformationRequest) throws Exception;
 }

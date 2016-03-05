@@ -8,10 +8,21 @@ package com.eureka.v1_0.kyc.information.exchange.impl;
 import com.eureka.v1_0.account.information.exchange.GetAccountRequest;
 import com.eureka.v1_0.account.information.exchange.GetAccountResponse;
 import com.eureka.v1_0.account.information.exchange.api.AccountInformationApiService;
+import com.eureka.v1_0.kyc.information.entities.ContactInformation;
 import com.eureka.v1_0.kyc.information.entities.EmailInformation;
 import com.eureka.v1_0.kyc.information.entities.MsisdnInformation;
 import com.eureka.v1_0.kyc.information.entities.PersonalInformation;
 import com.eureka.v1_0.kyc.information.exchange.api.KycInformationApiService;
+import com.eureka.v1_0.kyc.information.exchange.contactinformation.CreateContactInformationRequest;
+import com.eureka.v1_0.kyc.information.exchange.contactinformation.CreateContactInformationResponse;
+import com.eureka.v1_0.kyc.information.exchange.contactinformation.FindContactInformationRequest;
+import com.eureka.v1_0.kyc.information.exchange.contactinformation.FindContactInformationResponse;
+import com.eureka.v1_0.kyc.information.exchange.contactinformation.GetContactInformationRequest;
+import com.eureka.v1_0.kyc.information.exchange.contactinformation.GetContactInformationResponse;
+import com.eureka.v1_0.kyc.information.exchange.contactinformation.RemoveContactInformationRequest;
+import com.eureka.v1_0.kyc.information.exchange.contactinformation.RemoveContactInformationResponse;
+import com.eureka.v1_0.kyc.information.exchange.contactinformation.UpdateContactInformationRequest;
+import com.eureka.v1_0.kyc.information.exchange.contactinformation.UpdateContactInformationResponse;
 import com.eureka.v1_0.kyc.information.exchange.emailinformation.CreateEmailInformationRequest;
 import com.eureka.v1_0.kyc.information.exchange.emailinformation.CreateEmailInformationResponse;
 import com.eureka.v1_0.kyc.information.exchange.emailinformation.FindAccountEmailInformationRequest;
@@ -45,6 +56,7 @@ import com.eureka.v1_0.kyc.information.exchange.personalinformation.FindPersonal
 import com.eureka.v1_0.kyc.information.exchange.personalinformation.FindPersonalInformationByUidResponse;
 import com.eureka.v1_0.kyc.information.exchange.personalinformation.UpdatePersonalInformationRequest;
 import com.eureka.v1_0.kyc.information.exchange.personalinformation.UpdatePersonalInformationResponse;
+import com.eureka.v1_0.kyc.information.service.ContactInformationService;
 import com.eureka.v1_0.kyc.information.service.EmailInformationService;
 import com.eureka.v1_0.kyc.information.service.MsisdnInformationService;
 import com.eureka.v1_0.kyc.information.service.PersonalInformationService;
@@ -61,41 +73,45 @@ import org.springframework.stereotype.Service;
  */
 @Service(value = "kycInformationServiceImpl")
 public class KycInformationServiceImpl implements KycInformationApiService {
-    
+
     @Autowired
     @Qualifier(value = "personalInformationServiceImpl")
     PersonalInformationService personalInformationService;
-    
+
     @Autowired
     @Qualifier(value = "msisdnInformationServiceImpl")
     MsisdnInformationService msisdnInformationService;
-    
+
     @Autowired
     @Qualifier(value = "emailInformationServiceImpl")
     EmailInformationService emailInformationService;
-    
+
+    @Autowired
+    @Qualifier(value = "contactInformationServiceImpl")
+    ContactInformationService contactInformationService;
+
     @Autowired
     @Qualifier(value = "witLoggerServiceImpl")
     WitLoggerService witLoggerService;
-    
+
     @Autowired
     @Qualifier(value = "accountInformationApiServiceImpl")
     AccountInformationApiService accountInformationApiService;
-    
+
     @Override
     public CreatePersonalInformationResponse createPersonalInformation(CreatePersonalInformationRequest createPersonalInformationRequest) throws Exception {
         if (createPersonalInformationRequest != null) {
             witLoggerService.debug(JaxbHandler.toXml(createPersonalInformationRequest));
-            
+
             PersonalInformation personalInformation = new PersonalInformation();
 
             //find account details
             GetAccountRequest getAccountRequest = new GetAccountRequest();
             getAccountRequest.setAccountName(createPersonalInformationRequest.getAccountName());
-            
+
             GetAccountResponse getAccountResponse = this.accountInformationApiService.getAccountDetails(getAccountRequest);
             personalInformation.setAccount(getAccountResponse.getAccount());
-            
+
             personalInformation.setBelief(createPersonalInformationRequest.getBelief());
             personalInformation.setBio(createPersonalInformationRequest.getBio());
             personalInformation.setBirthName(createPersonalInformationRequest.getBirthName());
@@ -110,7 +126,7 @@ public class KycInformationServiceImpl implements KycInformationApiService {
             personalInformation.setOccupation(createPersonalInformationRequest.getOccupation());
             personalInformation.setPrimaryEmailAddress(createPersonalInformationRequest.getPrimaryEmailAddress());
             personalInformation.setSummary(createPersonalInformationRequest.getSummary());
-            
+
             witLoggerService.debug(JaxbHandler.toXml(personalInformation));
             witLoggerService.debug("Sending to Personal Information Service ... ");
             PersonalInformation persistedPersonalInformation = this.personalInformationService.createPersonalInformation(personalInformation);
@@ -125,7 +141,7 @@ public class KycInformationServiceImpl implements KycInformationApiService {
         }
         throw new KycInformationApiException("KYC Personal information cannot be NULL. Please send a valid information");
     }
-    
+
     @Override
     public FindPersonalInformationByAccountNameResponse findPersonalInformationByAccountName(FindPersonalInformationByAccountNameRequest findPersonalInformationByAccountNameRequest) throws Exception {
         if (findPersonalInformationByAccountNameRequest != null && findPersonalInformationByAccountNameRequest.getAccountName() != null) {
@@ -140,7 +156,7 @@ public class KycInformationServiceImpl implements KycInformationApiService {
         }
         throw new KycInformationApiException("KYC Find personal information parameters cannot be NULL. Please send a valid information");
     }
-    
+
     @Override
     public FindPersonalInformationByEmailResponse findPersonalInformationByEmail(FindPersonalInformationByEmailRequest findPersonalInformationByEmailRequest) throws Exception {
         if (findPersonalInformationByEmailRequest != null && findPersonalInformationByEmailRequest.getEmailAddress() != null) {
@@ -154,7 +170,7 @@ public class KycInformationServiceImpl implements KycInformationApiService {
         }
         throw new KycInformationApiException("KYC Find personal information parameters cannot be NULL. Please send a valid object");
     }
-    
+
     @Override
     public FindPersonalInformationByUidResponse findPersonalInformationByUid(FindPersonalInformationByUidRequest findPersonalInformationByUidRequest) throws Exception {
         if (findPersonalInformationByUidRequest != null && findPersonalInformationByUidRequest.getPersonalInformationUid() != null) {
@@ -169,7 +185,7 @@ public class KycInformationServiceImpl implements KycInformationApiService {
         }
         throw new KycInformationApiException("KYC Find personal information parameters cannot be NULL. Please send a valid object");
     }
-    
+
     @Override
     public UpdatePersonalInformationResponse updatePersonalInformation(UpdatePersonalInformationRequest updatePersonalInformationRequest) throws Exception {
         if (updatePersonalInformationRequest != null) {
@@ -179,10 +195,10 @@ public class KycInformationServiceImpl implements KycInformationApiService {
             //find account details
             GetAccountRequest getAccountRequest = new GetAccountRequest();
             getAccountRequest.setAccountName(updatePersonalInformationRequest.getAccountName());
-            
+
             GetAccountResponse getAccountResponse = this.accountInformationApiService.getAccountDetails(getAccountRequest);
             personalInformation.setAccount(getAccountResponse.getAccount());
-            
+
             personalInformation.setBelief(updatePersonalInformationRequest.getBelief());
             personalInformation.setBio(updatePersonalInformationRequest.getBio());
             personalInformation.setBirthName(updatePersonalInformationRequest.getBirthName());
@@ -197,10 +213,10 @@ public class KycInformationServiceImpl implements KycInformationApiService {
             personalInformation.setOccupation(updatePersonalInformationRequest.getOccupation());
             personalInformation.setPrimaryEmailAddress(updatePersonalInformationRequest.getPrimaryEmailAddress());
             personalInformation.setSummary(updatePersonalInformationRequest.getSummary());
-            
+
             personalInformation.setId(updatePersonalInformationRequest.getId());
             personalInformation.setExternalUid(updatePersonalInformationRequest.getPersonalInformationUid());
-            
+
             witLoggerService.debug(JaxbHandler.toXml(personalInformation));
             witLoggerService.debug("Sending to Personal Information Service ... ");
             PersonalInformation persistedPersonalInformation = this.personalInformationService.updatePersonalInformation(personalInformation);
@@ -215,21 +231,21 @@ public class KycInformationServiceImpl implements KycInformationApiService {
         }
         throw new KycInformationApiException("KYC Update personal information parameters cannot be NULL. Please send a valid object");
     }
-    
+
     @Override
     public CreateMsisdnInformationResponse createMsisdnInformation(CreateMsisdnInformationRequest createMsisdnInformationRequest) throws Exception {
         if (createMsisdnInformationRequest != null) {
             witLoggerService.debug(JaxbHandler.toXml(createMsisdnInformationRequest));
-            
+
             MsisdnInformation msisdnInformation = new MsisdnInformation();
 
             //find account details
             GetAccountRequest getAccountRequest = new GetAccountRequest();
             getAccountRequest.setAccountName(createMsisdnInformationRequest.getAccountName());
-            
+
             GetAccountResponse getAccountResponse = this.accountInformationApiService.getAccountDetails(getAccountRequest);
             msisdnInformation.setAccount(getAccountResponse.getAccount());
-            
+
             MsisdnInformation persistedMsisdnInformation = this.msisdnInformationService.createMsisdnInformation(msisdnInformation);
             if (persistedMsisdnInformation != null) {
                 CreateMsisdnInformationResponse createMsisdnInformationResponse = new CreateMsisdnInformationResponse();
@@ -242,7 +258,7 @@ public class KycInformationServiceImpl implements KycInformationApiService {
         }
         throw new KycInformationApiException("KYC Update msisdn information parameters cannot be NULL. Please send a valid object");
     }
-    
+
     @Override
     public FindAccountMsisdnInformationResponse findAccountMsisdnInformation(FindAccountMsisdnInformationRequest findAccountMsisdnInformationRequest) throws Exception {
         if (findAccountMsisdnInformationRequest != null) {
@@ -259,7 +275,7 @@ public class KycInformationServiceImpl implements KycInformationApiService {
         }
         throw new KycInformationApiException("KYC Find account msisdn information cannot be NULL. Please send another valid object. ");
     }
-    
+
     @Override
     public FindMsisdnInformationByUidResponse findMsisdnInformationByUid(FindMsisdnInformationByUidRequest findMsisdnInformationByUidRequest) throws Exception {
         if (findMsisdnInformationByUidRequest != null && findMsisdnInformationByUidRequest.getMsisdnInformationUid() != null) {
@@ -276,7 +292,7 @@ public class KycInformationServiceImpl implements KycInformationApiService {
         }
         throw new KycInformationApiException("KYC Find account msisdn information cannot be NULL. Please send another valid object.");
     }
-    
+
     @Override
     public RemoveMsisdnInformationResponse removeMsisdnInformation(RemoveMsisdnInformationRequest removeMsisdnInformationRequest) throws Exception {
         if (removeMsisdnInformationRequest != null && removeMsisdnInformationRequest.getMsisdnInformationUid() != null) {
@@ -292,7 +308,7 @@ public class KycInformationServiceImpl implements KycInformationApiService {
         }
         throw new KycInformationApiException("KYC Remove msisdn information cannot be NULL. Please send another valid object.");
     }
-    
+
     @Override
     public UpdateMsisdnInformationResponse updateMsisdnInformation(UpdateMsisdnInformationRequest updateMsisdnInformationRequest) throws Exception {
         if (updateMsisdnInformationRequest != null) {
@@ -309,7 +325,7 @@ public class KycInformationServiceImpl implements KycInformationApiService {
         }
         throw new KycInformationApiException("KYC update msisdn information cannot be NULL. Please send another valid object.");
     }
-    
+
     @Override
     public ValidateMsisdnInformationResponse validateMsisdnInformation(ValidateMsisdnInformationRequest validateMsisdnInformationRequest) throws Exception {
         if (validateMsisdnInformationRequest != null && validateMsisdnInformationRequest.getAccountName() != null && validateMsisdnInformationRequest.getMsisdn() != null) {
@@ -326,7 +342,7 @@ public class KycInformationServiceImpl implements KycInformationApiService {
         }
         throw new KycInformationApiException("KYC validate msisdn information cannot be NULL. Please send another valid object.");
     }
-    
+
     @Override
     public CreateEmailInformationResponse createEmailInformation(CreateEmailInformationRequest createEmailInformationRequest) throws Exception {
         if (createEmailInformationRequest != null) {
@@ -336,10 +352,10 @@ public class KycInformationServiceImpl implements KycInformationApiService {
             //find account details
             GetAccountRequest getAccountRequest = new GetAccountRequest();
             getAccountRequest.setAccountName(createEmailInformationRequest.getAccountName());
-            
+
             GetAccountResponse getAccountResponse = this.accountInformationApiService.getAccountDetails(getAccountRequest);
             emailInformation.setAccount(getAccountResponse.getAccount());
-            
+
             EmailInformation persistedEmailInformation = this.emailInformationService.createEmailInformation(emailInformation);
             if (persistedEmailInformation != null) {
                 CreateEmailInformationResponse createEmailInformationResponse = new CreateEmailInformationResponse();
@@ -352,7 +368,7 @@ public class KycInformationServiceImpl implements KycInformationApiService {
         }
         throw new KycInformationApiException("KYC create email information cannot be NULL. Please send another valid object.");
     }
-    
+
     @Override
     public FindAccountEmailInformationResponse findAccountEmailInformation(FindAccountEmailInformationRequest findAccountEmailInformationRequest) throws Exception {
         if (findAccountEmailInformationRequest != null && findAccountEmailInformationRequest.getAccountName() != null) {
@@ -369,7 +385,7 @@ public class KycInformationServiceImpl implements KycInformationApiService {
         }
         throw new KycInformationApiException("KYC find email information cannot be NULL. Please send another valid object.");
     }
-    
+
     @Override
     public RemoveEmailInformationResponse removeEmailInformation(RemoveEmailInformationRequest removeEmailInformationRequest) throws Exception {
         if (removeEmailInformationRequest != null && removeEmailInformationRequest.getAccountName() != null && removeEmailInformationRequest.getEmailAddress() != null) {
@@ -385,7 +401,7 @@ public class KycInformationServiceImpl implements KycInformationApiService {
         }
         throw new KycInformationApiException("KYC remove email information cannot be NULL. Please send another valid object.");
     }
-    
+
     @Override
     public UpdateEmailInformationResponse updateEmailInformation(UpdateEmailInformationRequest updateEmailInformationRequest) throws Exception {
         if (updateEmailInformationRequest != null) {
@@ -402,7 +418,7 @@ public class KycInformationServiceImpl implements KycInformationApiService {
         }
         throw new KycInformationApiException("KYC update email information cannot be NULL. Please send another valid object.");
     }
-    
+
     @Override
     public ValidateEmailInformationResponse validateEmailInformation(ValidateEmailInformationRequest validateEmailInformationRequest) throws Exception {
         if (validateEmailInformationRequest != null) {
@@ -413,11 +429,109 @@ public class KycInformationServiceImpl implements KycInformationApiService {
                 validateEmailInformationResponse.setEmailInformation(persistedEmailInformation);
                 witLoggerService.debug(JaxbHandler.toXml(validateEmailInformationResponse));
                 return validateEmailInformationResponse;
-            }else{
+            } else {
                 throw new KycInformationApiException("KYC validate email information failed. Please try again later.");
             }
         }
         throw new KycInformationApiException("KYC validate email information cannot be NULL. Please send another valid object.");
     }
-    
+
+    @Override
+    public CreateContactInformationResponse createContactInformation(CreateContactInformationRequest createContactInformationRequest) throws Exception {
+        if (createContactInformationRequest != null) {
+            ContactInformation contactInformation = new ContactInformation();
+            witLoggerService.debug(JaxbHandler.toXml(createContactInformationRequest));
+            //find account details
+            GetAccountRequest getAccountRequest = new GetAccountRequest();
+            getAccountRequest.setAccountName(createContactInformationRequest.getAccountName());
+
+            GetAccountResponse getAccountResponse = this.accountInformationApiService.getAccountDetails(getAccountRequest);
+            contactInformation.setAccount(getAccountResponse.getAccount());
+
+            contactInformation.setCityName(createContactInformationRequest.getCityName());
+            contactInformation.setCountryCode(createContactInformationRequest.getCountryCode());
+            contactInformation.setFloorNumber(createContactInformationRequest.getFloorNumber());
+            contactInformation.setHouseNumber(createContactInformationRequest.getHouseNumber());
+            contactInformation.setProvinceCode(createContactInformationRequest.getProvinceCode());
+            contactInformation.setStreetName(createContactInformationRequest.getStreetName());
+            contactInformation.setZipCode(createContactInformationRequest.getZipCode());
+
+            ContactInformation persistedContactInformation = this.contactInformationService.createContactInformation(contactInformation);
+            if (persistedContactInformation != null) {
+                CreateContactInformationResponse createContactInformationResponse = new CreateContactInformationResponse();
+                createContactInformationResponse.setContactInformation(persistedContactInformation);
+                witLoggerService.debug(JaxbHandler.toXml(createContactInformationResponse));
+                return createContactInformationResponse;
+            } else {
+                throw new KycInformationApiException("KYC create contact information failed. Please try again later.");
+            }
+        }
+        throw new KycInformationApiException("KYC create contact information cannot be NULL. Please send another valid object.");
+    }
+
+    @Override
+    public FindContactInformationResponse findContactInformation(FindContactInformationRequest findContactInformationRequest) throws Exception {
+        if (findContactInformationRequest != null && findContactInformationRequest.getAccountName() != null) {
+            witLoggerService.debug(JaxbHandler.toXml(findContactInformationRequest));
+            List<ContactInformation> contactInformations = null;
+            if (findContactInformationRequest.getContactInformationType() != null) {
+                contactInformations = this.contactInformationService.listContactInformationsByType(findContactInformationRequest.getAccountName(), findContactInformationRequest.getContactInformationType());
+            } else {
+                contactInformations = this.contactInformationService.listContactInformations(findContactInformationRequest.getAccountName());
+            }
+            FindContactInformationResponse findContactInformationResponse = new FindContactInformationResponse();
+            findContactInformationResponse.setContactInformations(contactInformations);
+            witLoggerService.debug(JaxbHandler.toXml(findContactInformationResponse));
+            return findContactInformationResponse;
+        }
+        throw new KycInformationApiException("KYC find contact information cannot be NULL. Please send another valid object.");
+    }
+
+    @Override
+    public GetContactInformationResponse getContactInformation(GetContactInformationRequest getContactInformationRequest) throws Exception {
+        if (getContactInformationRequest != null) {
+            ContactInformation persistedContactInformation = this.contactInformationService.getContactInformationByUid(getContactInformationRequest.getContactInformationUid());
+            if (persistedContactInformation != null) {
+                GetContactInformationResponse getContactInformationResponse = new GetContactInformationResponse();
+                getContactInformationResponse.setContactInformation(persistedContactInformation);
+                witLoggerService.debug(JaxbHandler.toXml(getContactInformationResponse));
+                return getContactInformationResponse;
+            } else {
+                throw new KycInformationApiException("KYC get contact information failed. Please try again.");
+            }
+        }
+        throw new KycInformationApiException("KYC get contact information cannot be NULL. Please send another valid object.");
+    }
+
+    @Override
+    public RemoveContactInformationResponse removeContactInformation(RemoveContactInformationRequest removeContactInformationRequest) throws Exception {
+        if (removeContactInformationRequest != null) {
+            if (this.contactInformationService.deleteContactInformation(removeContactInformationRequest.getContactInformationUid())) {
+                RemoveContactInformationResponse removeContactInformationResponse = new RemoveContactInformationResponse();
+                removeContactInformationResponse.setStatus(Boolean.TRUE);
+                witLoggerService.debug(JaxbHandler.toXml(removeContactInformationResponse));
+                return removeContactInformationResponse;
+            } else {
+                throw new KycInformationApiException("KYC remove contact information failed. Please try again.");
+            }
+        }
+        throw new KycInformationApiException("KYC remove contact information cannot be NULL. Please send another valid object.");
+    }
+
+    @Override
+    public UpdateContactInformationResponse updateContactInformation(UpdateContactInformationRequest updateContactInformationRequest) throws Exception {
+        if (updateContactInformationRequest != null) {
+            ContactInformation updatedContactInformation = this.contactInformationService.updateContactInformation(updateContactInformationRequest.getUpdatedContactInformation());
+            if (updatedContactInformation != null) {
+                UpdateContactInformationResponse updateContactInformationResponse = new UpdateContactInformationResponse();
+                updateContactInformationResponse.setContactInformation(updatedContactInformation);
+                witLoggerService.debug(JaxbHandler.toXml(updateContactInformationResponse));
+                return updateContactInformationResponse;
+            } else {
+                throw new KycInformationApiException("KYC update contact information failed. Please try again.");
+            }
+        }
+        throw new KycInformationApiException("KYC update contact information cannot be NULL. Please send another valid object.");
+    }
+
 }
